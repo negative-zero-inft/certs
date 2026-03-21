@@ -24,26 +24,16 @@ jobs:
           ref: svg
           path: svg-branch
 
-      - name: Detect changed JSON files
-        id: changed
-        run: |
-          cd main-branch
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'registry/*.json' 2>/dev/null || find registry -name '*.json')
-          echo "files=$CHANGED"
-          echo "files=$CHANGED" >> "$GITHUB_OUTPUT"
-
       - name: Generate SVGs
         run: |
           cd main-branch
           python3 scripts/generate_svg.py
-          echo "Generated SVGs:"
+          echo "Generated:"
           ls svg-out/
 
       - name: Copy SVGs to svg branch
         run: |
           cp main-branch/svg-out/*.svg svg-branch/ 2>/dev/null || true
-          echo "SVGs in target:"
-          ls svg-branch/*.svg 2>/dev/null || echo "none"
 
       - name: Commit and push to svg branch
         run: |
@@ -54,3 +44,27 @@ jobs:
           git diff --cached --quiet && echo "Nothing to commit" && exit 0
           git commit -m "regen svgs [skip ci]"
           git push
+
+      - name: Register issued IDs with Worker KV
+        env:
+          WORKER_URL:      "https://cert.neg-zero.com"
+          CF_CERT_SECRET:  ${{ secrets.CF_CERT_SECRET }}
+        run: |
+          cd main-branch
+          for f in registry/*.json; do
+            ID=$(python3 -c "import json,sys; d=json.load(open('$f')); print(d['id'])")
+            REPO_URL=$(python3 -c "import json,sys; d=json.load(open('$f')); print(d.get('meta',{}).get('url',''))")
+            echo "Registering $ID ($REPO_URL)..."
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              -X POST "$WORKER_URL/api/issue" \
+              -H "Content-Type: application/json" \
+              -H "X-Cert-Secret: $CF_CERT_SECRET" \
+              -d "{\"id\":\"$ID\",\"repo_url\":\"$REPO_URL\"}")
+            if [ "$STATUS" = "200" ]; then
+              echo "  ✓ registered"
+            elif [ "$STATUS" = "409" ]; then
+              echo "  ~ already registered (ok)"
+            else
+              echo "  ✗ unexpected status $STATUS"
+            fi
+          done

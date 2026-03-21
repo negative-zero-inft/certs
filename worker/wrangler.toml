@@ -1,0 +1,7 @@
+name = "certs-worker"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[[kv_namespaces]]
+binding = "certs"
+id = "08f693398a83406c97b51de9eb70b7f3"

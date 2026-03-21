@@ -1,0 +1,112 @@
+{
+  "id": "v5TkdA3",
+  "meta": {
+    "name": "Popcorn Kernel",
+    "vendor": "Negative Zero",
+    "type": "software",
+    "reviewed_at": "2026-03-21",
+    "reviewer": "doromiert"
+  },
+  "status": {
+    "tier": "conditional",
+    "conditions": [
+      {
+        "component": "Proprietary driver blobs",
+        "reason": "This project relies on multiple proprietary kernel drivers to work. There's no real alternative to them since the OEM and the Linux kernel themselves don't provide any way to source them in a way that allows the user to read the source code."
+      },
+      {
+        "component": "Linux source code",
+        "reason": "This project relies on the Linux kernel which, itself, isn't compatible with NAPALM as it is licensed under GPL-2.0\nAs of right now, there's not a compatible alternative."
+      },
+      {
+        "component": "Nix reliance",
+        "reason": "This project relies on Nix which, itself, isn't compatible with NAPALM as it is licensed under LGPL-2.1\nAs of right now, there's not a compatible alternative."
+      }
+    ]
+  },
+  "ux": {
+    "score": 5,
+    "note": "Simple build system via \"nix build .#X-variant\"."
+  },
+  "table": {
+    "licensing": {
+      "license": {
+        "value": "NAPALM",
+        "color": "green"
+      },
+      "source": {
+        "value": "FULL",
+        "color": "green"
+      },
+      "user_owns_data": {
+        "value": "YES",
+        "color": "green"
+      },
+      "right_to_modify": {
+        "value": "ALLOWED",
+        "color": "green"
+      }
+    },
+    "monetization": {
+      "base_cost": {
+        "value": "FREE",
+        "color": "green"
+      },
+      "model": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "ads": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "iap": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "service_note": "All kernel variants are compiled for a nightly build automatically via GH actions and manually for releases."
+    },
+    "privacy": {
+      "telemetry": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "network_disclosure": {
+        "value": "FULL",
+        "color": "green"
+      },
+      "layers_inspectable": {
+        "value": "FULL",
+        "color": "green"
+      }
+    },
+    "reproducibility": {
+      "config_portable": {
+        "value": "FULL",
+        "color": "green"
+      },
+      "silent_updates": {
+        "value": "NEVER",
+        "color": "green"
+      },
+      "rebuild_from_desc": {
+        "value": "YES",
+        "color": "green"
+      }
+    },
+    "ability": {
+      "configurability": {
+        "value": "RECOMPILE",
+        "color": "amber"
+      },
+      "component_replace": {
+        "value": "MEDIUM",
+        "color": "amber"
+      },
+      "power_user_ceiling": {
+        "value": "UNLIMITED",
+        "color": "green"
+      }
+    }
+  }
+}

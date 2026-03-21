@@ -7,12 +7,12 @@
 //
 // Issued cert IDs are NOT stored in KV — GitHub raw is the source of truth.
 
-const REPO   = "negative-zero-inft/certs";
+const REPO = "negative-zero-inft/certs";
 const BRANCH = "svg";
-const PAGES  = "https://negative-zero-inft.github.io/certs";
+const PAGES = "https://negative-zero-inft.github.io/certs";
 
 const ID_RE = /^[A-Za-z0-9\-_]{7}$/;
-const FONT  = "system-ui,-apple-system,'Segoe UI',sans-serif";
+const FONT = "system-ui,-apple-system,'Segoe UI',sans-serif";
 
 function awaitingSVG(repoPath) {
   const label = decodeURIComponent(repoPath);
@@ -52,54 +52,77 @@ function transitionSVG(repoPath, realId) {
 
 export default {
   async fetch(request, env) {
-    const url  = new URL(request.url);
+    const url = new URL(request.url);
     const path = url.pathname.replace(/^\//, "");
 
     // Editor passthrough
-    if (!path || path === "index.html" || path === "favicon.ico") {
-        const r = new Request(`${PAGES}/${path}`, request);
-        return fetch(r, { headers: { ...Object.fromEntries(request.headers), host: "negative-zero-inft.github.io" } });
+    if (!path || path === "index.html") {
+      return fetch(`https://negative-zero-inft.github.io/certs/${path}`, {
+        headers: { host: "negative-zero-inft.github.io" },
+        redirect: "manual",
+      }).then((r) => {
+        // if github redirects, just serve a fresh fetch without custom domain
+        if (r.status === 301 || r.status === 302) {
+          return fetch(`https://negative-zero-inft.github.io/certs/${path}`, {
+            headers: { host: "negative-zero-inft.github.io" },
+          });
+        }
+        return r;
+      });
     }
 
     // Pending list API (used by editor sidebar)
     if (path === "api/pending") {
-      const list  = await env.CERTS.list({ prefix: "pending:" });
+      const list = await env.CERTS.list({ prefix: "pending:" });
       const items = await Promise.all(
         list.keys.map(async ({ name }) => {
           const val = await env.CERTS.get(name, { type: "json" });
           return { repo: name.replace("pending:", ""), ...val };
-        })
+        }),
       );
       return new Response(JSON.stringify(items), {
-        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
       });
     }
 
     // Issued cert — 7 base64url chars
     if (ID_RE.test(path)) {
-      const svgUrl   = `https://raw.githubusercontent.com/${REPO}/refs/heads/${BRANCH}/${path}.svg`;
+      const svgUrl = `https://raw.githubusercontent.com/${REPO}/refs/heads/${BRANCH}/${path}.svg`;
       const upstream = await fetch(svgUrl);
       if (upstream.ok) return Response.redirect(svgUrl, 302);
       return new Response("Cert not found", { status: 404 });
     }
 
     // Vanity repo URL
-    const repoPath  = path;
-    const transition = await env.CERTS.get(`transition:${repoPath}`, { type: "json" });
+    const repoPath = path;
+    const transition = await env.CERTS.get(`transition:${repoPath}`, {
+      type: "json",
+    });
     if (transition) {
       return new Response(transitionSVG(repoPath, transition.real_id), {
-        headers: { "Content-Type": "image/svg+xml", "Cache-Control": "no-cache" },
+        headers: {
+          "Content-Type": "image/svg+xml",
+          "Cache-Control": "no-cache",
+        },
       });
     }
 
     // Log pending hit
-    const existing = await env.CERTS.get(`pending:${repoPath}`, { type: "json" });
-    const now      = new Date().toISOString();
-    await env.CERTS.put(`pending:${repoPath}`, JSON.stringify({
-      first_seen: existing?.first_seen ?? now,
-      hit_count:  (existing?.hit_count  ?? 0) + 1,
-      last_seen:  now,
-    }));
+    const existing = await env.CERTS.get(`pending:${repoPath}`, {
+      type: "json",
+    });
+    const now = new Date().toISOString();
+    await env.CERTS.put(
+      `pending:${repoPath}`,
+      JSON.stringify({
+        first_seen: existing?.first_seen ?? now,
+        hit_count: (existing?.hit_count ?? 0) + 1,
+        last_seen: now,
+      }),
+    );
 
     return new Response(awaitingSVG(repoPath), {
       headers: { "Content-Type": "image/svg+xml", "Cache-Control": "no-cache" },

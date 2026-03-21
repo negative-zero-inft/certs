@@ -1,0 +1,56 @@
+name: Generate SVGs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'registry/*.json'
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          path: main-branch
+
+      - name: Checkout svg branch
+        uses: actions/checkout@v4
+        with:
+          ref: svg
+          path: svg-branch
+
+      - name: Detect changed JSON files
+        id: changed
+        run: |
+          cd main-branch
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'registry/*.json' 2>/dev/null || find registry -name '*.json')
+          echo "files=$CHANGED"
+          echo "files=$CHANGED" >> "$GITHUB_OUTPUT"
+
+      - name: Generate SVGs
+        run: |
+          cd main-branch
+          python3 scripts/generate_svg.py
+          echo "Generated SVGs:"
+          ls svg-out/
+
+      - name: Copy SVGs to svg branch
+        run: |
+          cp main-branch/svg-out/*.svg svg-branch/ 2>/dev/null || true
+          echo "SVGs in target:"
+          ls svg-branch/*.svg 2>/dev/null || echo "none"
+
+      - name: Commit and push to svg branch
+        run: |
+          cd svg-branch
+          git config user.name  "cert-bot"
+          git config user.email "bot@neg-zero.com"
+          git add -A
+          git diff --cached --quiet && echo "Nothing to commit" && exit 0
+          git commit -m "regen svgs [skip ci]"
+          git push

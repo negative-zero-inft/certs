@@ -7,6 +7,8 @@
 //
 // Issued cert IDs are NOT stored in KV — GitHub raw is the source of truth.
 
+const REPO_RE =
+  /^(github\.com|gitlab\.com|codeberg\.org|bitbucket\.org)\/[^/]+\/[^/]+/;
 const REPO = "negative-zero-inft/certs";
 const BRANCH = "svg";
 const PAGES = "https://negative-zero-inft.github.io/certs";
@@ -111,6 +113,13 @@ export default {
     }
 
     // Log pending hit
+    if (!REPO_RE.test(repoPath))
+      return new Response(awaitingSVG(repoPath), {
+        headers: {
+          "Content-Type": "image/svg+xml",
+          "Cache-Control": "no-cache",
+        },
+      });
     const existing = await env.CERTS.get(`pending:${repoPath}`, {
       type: "json",
     });

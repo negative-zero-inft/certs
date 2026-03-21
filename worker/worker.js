@@ -56,8 +56,9 @@ export default {
     const path = url.pathname.replace(/^\//, "");
 
     // Editor passthrough
-    if (!path || path === "index.html") {
-      return fetch(`${PAGES}/${path}`);
+    if (!path || path === "index.html" || path === "favicon.ico") {
+        const r = new Request(`${PAGES}/${path}`, request);
+        return fetch(r, { headers: { ...Object.fromEntries(request.headers), host: "negative-zero-inft.github.io" } });
     }
 
     // Pending list API (used by editor sidebar)

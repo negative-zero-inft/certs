@@ -1,0 +1,112 @@
+{
+  "id": "oDTFFm5",
+  "meta": {
+    "name": "ZenPkgs",
+    "vendor": "Negative Zero",
+    "type": "software",
+    "reviewed_at": "2026-03-29",
+    "reviewer": "doromiert"
+  },
+  "status": {
+    "tier": "conditional",
+    "conditions": [
+      {
+        "component": "Reliance on Nix",
+        "reason": "Nix is licensed under LGPL 2.1 which is not compatible with NAPALM."
+      },
+      {
+        "component": "Reliance on Linux",
+        "reason": "Linux is licensed under GPL 2 which is not compatible with NAPALM."
+      },
+      {
+        "component": "3rd party software",
+        "reason": "A lot of 3rd party software included with ZenPkgs isn't compatible with NAPALM. There's nothing we can realistically do about it unfortunately."
+      }
+    ]
+  },
+  "ux": {
+    "score": 4.5,
+    "note": "Integrated directly into ZenOS. ZONE is a nice improvement over base nix."
+  },
+  "table": {
+    "licensing": {
+      "license": {
+        "value": "NAPALM",
+        "color": "green"
+      },
+      "source": {
+        "value": "FULL",
+        "color": "green"
+      },
+      "user_owns_data": {
+        "value": "YES",
+        "color": "green"
+      },
+      "right_to_modify": {
+        "value": "ALLOWED",
+        "color": "green"
+      }
+    },
+    "monetization": {
+      "base_cost": {
+        "value": "FREE",
+        "color": "green"
+      },
+      "model": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "ads": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "iap": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "service_note": "The default nix repository for ZenOS"
+    },
+    "privacy": {
+      "telemetry": {
+        "value": "3RD-PARTY",
+        "color": "amber"
+      },
+      "network_disclosure": {
+        "value": "FULL",
+        "color": "green"
+      },
+      "layers_inspectable": {
+        "value": "FULL",
+        "color": "green"
+      }
+    },
+    "reproducibility": {
+      "config_portable": {
+        "value": "FULL",
+        "color": "green"
+      },
+      "silent_updates": {
+        "value": "NEVER",
+        "color": "green"
+      },
+      "rebuild_from_desc": {
+        "value": "YES",
+        "color": "green"
+      }
+    },
+    "ability": {
+      "configurability": {
+        "value": "CONFIG FILE",
+        "color": "green"
+      },
+      "component_replace": {
+        "value": "FULL",
+        "color": "green"
+      },
+      "power_user_ceiling": {
+        "value": "UNLIMITED",
+        "color": "green"
+      }
+    }
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "id": "crW7769",
+  "meta": {
+    "name": "Dash Stacks Extension",
+    "vendor": "Negative Zero",
+    "type": "software",
+    "reviewed_at": "2026-03-31",
+    "reviewer": "doromiert"
+  },
+  "status": {
+    "tier": "conditional",
+    "conditions": [
+      {
+        "component": "Reliance on GNOME",
+        "reason": "This is an extension for the GNOME desktop, which, is licensed under GPL 2.0 or later, which is incompatible with NAPALM. There's no way to get around that."
+      }
+    ]
+  },
+  "ux": {
+    "score": 4,
+    "note": "Most features work fine but the styling could be better."
+  },
+  "table": {
+    "licensing": {
+      "license": {
+        "value": "NAPALM",
+        "color": "green"
+      },
+      "source": {
+        "value": "FULL",
+        "color": "green"
+      },
+      "user_owns_data": {
+        "value": "YES",
+        "color": "green"
+      },
+      "right_to_modify": {
+        "value": "ALLOWED",
+        "color": "green"
+      }
+    },
+    "monetization": {
+      "base_cost": {
+        "value": "FREE",
+        "color": "green"
+      },
+      "model": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "ads": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "iap": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "service_note": ""
+    },
+    "privacy": {
+      "telemetry": {
+        "value": "NONE",
+        "color": "green"
+      },
+      "network_disclosure": {
+        "value": "UNNEEDED",
+        "color": "green"
+      },
+      "layers_inspectable": {
+        "value": "FULL",
+        "color": "green"
+      }
+    },
+    "reproducibility": {
+      "config_portable": {
+        "value": "FULL",
+        "color": "green"
+      },
+      "silent_updates": {
+        "value": "NEVER",
+        "color": "green"
+      },
+      "rebuild_from_desc": {
+        "value": "YES",
+        "color": "green"
+      }
+    },
+    "ability": {
+      "configurability": {
+        "value": "GUI CONFIG",
+        "color": "green"
+      },
+      "component_replace": {
+        "value": "DUAL-PURPOSE",
+        "color": "amber"
+      },
+      "power_user_ceiling": {
+        "value": "UNLIMITED",
+        "color": "green"
+      }
+    }
+  }
+}
